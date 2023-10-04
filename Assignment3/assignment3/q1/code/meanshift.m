@@ -17,8 +17,6 @@ for i=1:size(mesh)
     mesh1(1,i)=i-ceil(kernel_size/2);
 end
 [X1,Y1] = meshgrid(mesh1);
-cents = 1;
-centroids = [0,0,0,0];
 for i=floor(kernel_size/2)+1:a(1)+floor(kernel_size/2)
     for j=floor(kernel_size/2)+1:a(2)+floor(kernel_size/2)
         x2 = i;
@@ -39,31 +37,7 @@ for i=floor(kernel_size/2)+1:a(1)+floor(kernel_size/2)
             y2=max( min( floor(sum(y.*Gss.*Gsr,'all')/sum(Gss.*Gsr,'all')), a(2)+floor(kernel_size/2) ), floor(kernel_size/2)+1);
             I2=sum(intensity.*Gss.*Gsr,'all')/sum(Gss.*Gsr,'all');
         end
-        check = 0;
-        if cents == 1
-            cents = cents+1;
-            centroids(cents,:) = [x2, y2, I2, 1];
-        else
-            
-            for p=2:cents
-                if dist_weight*((centroids(p,1)-x2)^2 + (centroids(p,2)-y2)^2) + intens_weight*((centroids(p,3)-I2)^2) < thresh^2
-                    I2 = centroids(p,3);
-                    l = centroids(p,4);
-                    centroids(p,1) = (l/(l+1))*(centroids(p,1)) + (1/(l+1))*(x2);
-                    centroids(p,2) = (l/(l+1))*(centroids(p,2)) + (1/(l+1))*(y2);
-                    centroids(p,3) = (l/(l+1))*(centroids(p,3)) + (1/(l+1))*(I2);
-                    centroids(p,4) = l+1;
-                    check = 1;
-                    break;
-                end
-            end
-        end
-        if check == 0
-            cents = cents+1;
-            centroids(cents, :) = [x2, y2, I2, 1];
-        end
         im2(i-floor(kernel_size/2),j-floor(kernel_size/2))=I2;
     end
 end
-cents
 end
